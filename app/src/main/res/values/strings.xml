@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">RxAndroidTest</string>
+
+
+    <string name="observer_min">小明</string>
+    <string name="observer_mei">小美</string>
+
+    <string name="subscribe">訂閱</string>
+    <string name="unsubscribe">取消訂閱</string>
+
+    <string name="news">發送新聞</string>
+
+    <string name="observer_pattern">Observer pattern</string>
+
+
+</resources>
