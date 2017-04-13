@@ -16,12 +16,20 @@
         android:text="@string/observer_pattern"/>
 
     <Button
-        android:id="@+id/go_observer_btn"
+        android:id="@+id/go_rxjava_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/go_rxjava_page"/>
 
     <Button
-        android:id="@+id/go_retrofit_btn"
+        android:id="@+id/go_rxbinding_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/go_rxbinding_page"/>
+
+    <Button
+        android:id="@+id/go_rxlifecycle_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/go_rxlifecycle"/>
 </LinearLayout>

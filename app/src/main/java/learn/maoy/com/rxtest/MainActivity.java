@@ -3,10 +3,11 @@ package learn.maoy.com.rxtest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import learn.maoy.com.rxtest.news.NewsActivity;
-import learn.maoy.com.rxtest.rxandroid.MyRxActivity;
+import learn.maoy.com.rxtest.rxbinding.BindingActivity;
+import learn.maoy.com.rxtest.rxjava.MyRxActivity;
+import learn.maoy.com.rxtest.rxlifecycle.LCActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,14 +17,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.go_news_btn).setOnClickListener(l -> goNewsPage());
-        findViewById(R.id.go_observer_btn).setOnClickListener(l -> goRxJava());
-        findViewById(R.id.go_retrofit_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, NextActivity.class);
-                startActivity(intent);
-            }
-        });
+        findViewById(R.id.go_rxjava_btn).setOnClickListener(l -> goRxJava());
+        findViewById(R.id.go_rxbinding_btn).setOnClickListener(l -> goRxBinding());
+        findViewById(R.id.go_rxlifecycle_btn).setOnClickListener(l -> goRxLifecycle());
     }
 
     private void goNewsPage() {
@@ -33,6 +29,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void goRxJava() {
         Intent intent = new Intent(MainActivity.this, MyRxActivity.class);
+        startActivity(intent);
+    }
+
+    private void goRxBinding() {
+        Intent intent = new Intent(MainActivity.this, BindingActivity.class);
+        startActivity(intent);
+    }
+
+    private void goRxLifecycle() {
+        Intent intent = new Intent(MainActivity.this, LCActivity.class);
         startActivity(intent);
     }
 }

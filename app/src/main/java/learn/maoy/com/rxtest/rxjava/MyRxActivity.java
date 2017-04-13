@@ -1,8 +1,11 @@
-package learn.maoy.com.rxtest.rxandroid;
+package learn.maoy.com.rxtest.rxjava;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,6 +14,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
+import learn.maoy.com.rxtest.R;
 import rx.Observable;
 import rx.Observer;
 import rx.Scheduler;
@@ -36,15 +40,60 @@ public class MyRxActivity extends AppCompatActivity {
     private final static String TAG = "MyRxActivity";
     private List<Integer> lists;
     private CompositeSubscription compositeSubscription;
+    private TextView textView;
+    private ScrollView scrollView;
+    private StringBuilder s;
+
+    private Observable<Long> intervalObservable;
+    private Subscription intervalObserver1, intervalObserver2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_rx);
+        textView = (TextView) findViewById(R.id.rx_tv);
+        scrollView = (ScrollView) findViewById(R.id.rx_tv_scroll);
 
+        s = new StringBuilder();
         compositeSubscription = new CompositeSubscription();
         lists = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             lists.add(i);
+        }
+
+        findViewById(R.id.rx_clear).setOnClickListener(v -> clearMessage());
+        findViewById(R.id.rx_just).setOnClickListener(v -> observableJust());
+        findViewById(R.id.rx_from).setOnClickListener(v -> observableFrom());
+        findViewById(R.id.rx_create).setOnClickListener(v -> observableCreate());
+        findViewById(R.id.rx_interval).setOnClickListener(v -> observableInterval());
+        findViewById(R.id.rx_interval_unsubscribe).setOnClickListener(v->observableIntervalClose());
+        findViewById(R.id.rx_map).setOnClickListener(v -> observableMap());
+        findViewById(R.id.rx_flat_map).setOnClickListener(v -> observableFlapMap());
+        findViewById(R.id.rx_filter).setOnClickListener(v -> observableFilter());
+        findViewById(R.id.rx_single_create).setOnClickListener(v -> singleCreate());
+        findViewById(R.id.rx_single_just).setOnClickListener(v -> singleJust());
+        findViewById(R.id.rx_async_subject).setOnClickListener(v -> asyncSubject());
+        findViewById(R.id.rx_behavior_subject).setOnClickListener(v -> behaviorSubject());
+        findViewById(R.id.rx_public_subject).setOnClickListener(v -> publishSubject());
+        findViewById(R.id.rx_replay_subject).setOnClickListener(v -> replaySubject());
+    }
+
+    private void clearMessage() {
+        s = new StringBuilder();
+        textView.setText(s);
+    }
+
+    private void setMessage(final String tag, final String massage) {
+        s.append(tag).append(": ").append(massage).append("\n");
+        textView.setText(s);
+        scrollView.fullScroll(View.FOCUS_DOWN);
+    }
+
+    private void waitTime(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            Log.d(TAG, e.toString());
         }
     }
 
@@ -64,11 +113,13 @@ public class MyRxActivity extends AppCompatActivity {
 
             @Override
             public void onNext(Integer i) {
-                Log.d(TAG, "onNext : " + i);
+                setMessage("Just", i.toString());
             }
         };
 
         Subscription subscription = Observable.just(1, 2, 3, 4)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(intSubscriber);
         compositeSubscription.add(subscription);
     }
@@ -76,73 +127,82 @@ public class MyRxActivity extends AppCompatActivity {
     // 2 : from
     private void observableFrom() {
         Subscription subscription = Observable.from(lists)
-                .subscribe(integer -> {
-                    Log.d(TAG, "List " + integer);
-                });
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> setMessage("From", integer.toString()));
         compositeSubscription.add(subscription);
     }
 
     // 3 : create
     private void observableCreate() {
         Log.d(TAG, "observableCreate");
-
-        Subscription subscription = Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                try {
-                    for (int i = 1; i < 5; i++) {
-                        subscriber.onNext(i);
-                        Thread.sleep(100);
+        Subscription subscription =
+                Observable.create(new Observable.OnSubscribe<Integer>() {
+                    @Override
+                    public void call(Subscriber<? super Integer> subscriber) {
+                        try {
+                            for (int i = 1; i < 16; i++) {
+                                subscriber.onNext(i);
+                                Thread.sleep(500);
+                            }
+                            subscriber.onCompleted();
+                        } catch (Exception e) {
+                            subscriber.onError(e);
+                        }
                     }
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        }).subscribe(new Subscriber<Integer>() {
+                }).subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<Integer>() {
 
-            @Override
-            public void onCompleted() {
-                Log.d(TAG, "Subscriber Sequence complete.");
-            }
+                            @Override
+                            public void onCompleted() {
+                                Log.d(TAG, "Subscriber Sequence complete.");
+                            }
 
-            @Override
-            public void onError(Throwable e) {
-                Log.d(TAG, "Subscriber Error: " + e.getMessage());
-            }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.d(TAG, "Subscriber Error: " + e.getMessage());
+                            }
 
-            @Override
-            public void onNext(Integer integer) {
-                Log.d(TAG, "Subscriber Next: " + integer);
-            }
-        });
+                            @Override
+                            public void onNext(Integer integer) {
+                                setMessage("Create", integer.toString());
+                            }
+                        });
         compositeSubscription.add(subscription);
     }
 
     private void observableInterval() {
         // cold
-        Observable<Long> cold = Observable.interval(200, TimeUnit.MILLISECONDS);
-        cold.subscribe(aLong -> {Log.d(TAG, "First: " + aLong);});
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Log.d(TAG, e.toString());
-        }
-        cold.subscribe(aLong -> {Log.d(TAG, "Second: " + aLong);});
+        intervalObservable = Observable.interval(400, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        intervalObserver1 = intervalObservable.subscribe(aLong -> setMessage("Interval First", aLong.toString()));
+        waitTime(500);
+        intervalObserver2 = intervalObservable.subscribe(aLong -> setMessage("Interval Second", aLong.toString()));
+
+        compositeSubscription.add(intervalObserver1);
+        compositeSubscription.add(intervalObserver2);
+    }
+
+    private void observableIntervalClose() {
+        if (!intervalObserver1.isUnsubscribed()) intervalObserver1.unsubscribe();
+        if (!intervalObserver2.isUnsubscribed()) intervalObserver2.unsubscribe();
     }
 
     private void observableIntervalToHot() {
         // publish() 把冷變熱
         // ConnectableObservable 如果不調用connect()則不會觸發數據流的執行
-        ConnectableObservable<Long> cold = Observable.interval(200, TimeUnit.MILLISECONDS).publish();
+        ConnectableObservable<Long> cold = Observable.interval(10, TimeUnit.MILLISECONDS).publish();
         Subscription s = cold.connect();
-        cold.subscribe(aLong -> {Log.d(TAG, "First: " + aLong);});
+        cold.subscribe(aLong -> Log.d(TAG, "First: " + aLong));
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             Log.d(TAG, e.toString());
         }
-        cold.subscribe(aLong -> {Log.d(TAG, "Second: " + aLong);});
+        cold.subscribe(aLong -> Log.d(TAG, "Second: " + aLong));
         s.unsubscribe();
     }
 
@@ -153,11 +213,11 @@ public class MyRxActivity extends AppCompatActivity {
         Log.d(TAG, result);
 
         Subscription subscription = Observable.just("YA")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .map(s -> s.hashCode())
                 .map(integer -> Integer.toString(integer))
-                .subscribe(s -> {
-                    Log.d(TAG, s);
-                });
+                .subscribe(s -> setMessage("Map", s));
         compositeSubscription.add(subscription);
     }
 
@@ -239,14 +299,19 @@ public class MyRxActivity extends AppCompatActivity {
 //                }).subscribe(s -> {Log.d(TAG, s);});
 
         Book math = new Book();
-        String[] mathChapter = {"sin", "cos"};
+        List<String> mathChapter = new ArrayList<>();
+        mathChapter.add("math sin");
+        mathChapter.add("math cos");
         List<Integer> mathPages = lists;
         math.setName("math");
         math.setChapters(mathChapter);
         math.setPages(mathPages);
 
         Book comic = new Book();
-        String[] comicChapter = {"start", "hit", "continue"};
+        List<String> comicChapter = new ArrayList<>();
+        comicChapter.add("comic start");
+        comicChapter.add("comic hit");
+        comicChapter.add("comic continue");
         List<Integer> comicPages = lists;
         comic.setName("comic");
         comic.setChapters(comicChapter);
@@ -254,16 +319,14 @@ public class MyRxActivity extends AppCompatActivity {
 
         Book[] books = {math, comic};
         Subscription subscription = Observable.from(books)
-                .observeOn(Schedulers.computation())
-                .subscribeOn(Schedulers.io())
-                .flatMap(new Func1<Book, Observable<Integer>>() {
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new Func1<Book, Observable<String>>() {
                     @Override
-                    public Observable<Integer> call(Book book) {
-                        return Observable.from(book.getPages());
+                    public Observable<String> call(Book book) {
+                        return Observable.from(book.getChapters());
                     }
-                }).subscribe(i -> {
-                    Log.d(TAG, Integer.toString(i));
-                });
+                }).subscribe(s -> setMessage("FlatMap", s));
         compositeSubscription.add(subscription);
     }
 
@@ -282,18 +345,15 @@ public class MyRxActivity extends AppCompatActivity {
         /*--------------------------------------*/
 
         Subscription subscription = Observable.from(lists)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .filter(new Func1<Integer, Boolean>() {
                     @Override
                     public Boolean call(Integer integer) {
                         return integer > 4;
                     }
                 })
-                .subscribe(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer integer) {
-                        Log.d(TAG, Integer.toString(integer));
-                    }
-                });
+                .subscribe(integer -> setMessage("Filter", integer.toString()));
         compositeSubscription.add(subscription);
     }
 
@@ -307,10 +367,12 @@ public class MyRxActivity extends AppCompatActivity {
                     singleSubscriber.onError(e);
                 }
             }
-        }).subscribe(new SingleSubscriber<String>() {
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleSubscriber<String>() {
             @Override
             public void onSuccess(String s) {
-                Log.d(TAG, s);
+                setMessage("Single Create", s);
             }
 
             @Override
@@ -323,12 +385,14 @@ public class MyRxActivity extends AppCompatActivity {
 
     private void singleJust() {
         Subscription subscription = Single.just("Hello world")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .map(s -> s.hashCode())
                 .map(integer -> Integer.toString(integer))
                 .subscribe(new SingleSubscriber<String>() {
                     @Override
                     public void onSuccess(String s) {
-                        Log.d(TAG, s);
+                        setMessage("Single Just", s);
                     }
 
                     @Override
@@ -348,7 +412,7 @@ public class MyRxActivity extends AppCompatActivity {
         as.subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer i) {
-                Log.d(TAG, Integer.toString(i));
+                setMessage("asyncSubject", i.toString());
                 // output 3
             }
         });
@@ -368,7 +432,7 @@ public class MyRxActivity extends AppCompatActivity {
         bs.subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer i) {
-                Log.d(TAG, Integer.toString(i));
+                setMessage("behaviorSubject", i.toString());
             }
         });
     }
@@ -386,14 +450,12 @@ public class MyRxActivity extends AppCompatActivity {
         ps.subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer i) {
-                Log.d(TAG, Integer.toString(i));
+                setMessage("publishSubject", i.toString());
             }
         });
     }
 
     private void replaySubject() {
-
-
         ReplaySubject<Integer> rs = ReplaySubject.create();
 
         Observable.just(0)
@@ -406,7 +468,7 @@ public class MyRxActivity extends AppCompatActivity {
         rs.subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer i) {
-                Log.d(TAG, Integer.toString(i));
+                setMessage("replaySubject", i.toString());
                 //無論何時訂閱，都會收到全部
             }
         });
@@ -432,9 +494,7 @@ public class MyRxActivity extends AppCompatActivity {
         Observable.just(1, 2, 3, 4)
                 .subscribeOn(Schedulers.io()) // 指定 subscribe() 發生在 IO thread
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的callback發生在main thread
-                .subscribe(number -> {
-                    Log.d(TAG, "number:" + number);
-                });
+                .subscribe(number -> Log.d(TAG, "number:" + number));
 
     }
 
@@ -446,13 +506,7 @@ public class MyRxActivity extends AppCompatActivity {
                 .observeOn(Schedulers.io())
                 .map(s -> s.hashCode())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(integer -> {
-                    Log.d(TAG, integer.toString());
-                });
-
-    }
-
-    private void rxAndroid() {
+                .subscribe(integer -> Log.d(TAG, integer.toString()));
     }
 
     @Override

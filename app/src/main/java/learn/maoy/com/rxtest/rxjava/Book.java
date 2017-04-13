@@ -1,4 +1,4 @@
-package learn.maoy.com.rxtest.rxandroid;
+package learn.maoy.com.rxtest.rxjava;
 
 import java.util.List;
 
@@ -8,14 +8,14 @@ import java.util.List;
 
 public class Book {
     private String name;
-    private String[] chapters;
+    private List<String> chapters;
     private List<Integer> pages;
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setChapters(String[] chapters) {
+    public void setChapters(List<String> chapters) {
         this.chapters = chapters;
     }
 
@@ -27,7 +27,7 @@ public class Book {
         return name;
     }
 
-    public String[] getChapters() {
+    public List<String> getChapters() {
         return chapters;
     }
 

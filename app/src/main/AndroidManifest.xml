@@ -8,18 +8,22 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="learn.maoy.com.rxtest.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="learn.maoy.com.rxtest.NextActivity">
+        <activity android:name=".NextActivity">
         </activity>
-        <activity android:name="learn.maoy.com.rxtest.news.NewsActivity">
+        <activity android:name=".news.NewsActivity">
         </activity>
-        <activity android:name="learn.maoy.com.rxtest.rxandroid.MyRxActivity">
+        <activity android:name=".rxjava.MyRxActivity">
+        </activity>
+        <activity android:name=".rxbinding.BindingActivity">
+        </activity>
+        <activity android:name=".rxlifecycle.LCActivity">
         </activity>
     </application>
 

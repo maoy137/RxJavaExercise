@@ -1,14 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     android:id="@+id/activity_rx"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="learn.maoy.com.rxtest.rxandroid.MyRxActivity">
+    android:orientation="vertical"
+    tools:context="learn.maoy.com.rxtest.rxjava.MyRxActivity">
 
-</RelativeLayout>
+    <ScrollView
+        android:id="@+id/rx_tv_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.35"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/rx_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.65">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/rx_clear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear Message"/>
+
+            <Button
+                android:id="@+id/rx_just"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Just"/>
+
+            <Button
+                android:id="@+id/rx_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="From"/>
+
+            <Button
+                android:id="@+id/rx_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/rx_interval"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="Interval"/>
+
+                <Button
+                    android:id="@+id/rx_interval_unsubscribe"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:maxLines="1"
+                    android:text="Unsubscribe"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/rx_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Map"/>
+
+            <Button
+                android:id="@+id/rx_flat_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FlatMap"/>
+
+            <Button
+                android:id="@+id/rx_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Filter"/>
+
+            <Button
+                android:id="@+id/rx_single_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Single Create"/>
+
+            <Button
+                android:id="@+id/rx_single_just"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Single Just"/>
+
+            <Button
+                android:id="@+id/rx_async_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AsyncSubject"/>
+
+            <Button
+                android:id="@+id/rx_behavior_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BehaviorSubject"/>
+
+            <Button
+                android:id="@+id/rx_public_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PublicSubject"/>
+
+            <Button
+                android:id="@+id/rx_replay_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ReplaySubject"/>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>
