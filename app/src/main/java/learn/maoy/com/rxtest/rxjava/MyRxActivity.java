@@ -66,7 +66,7 @@ public class MyRxActivity extends AppCompatActivity {
         findViewById(R.id.rx_from).setOnClickListener(v -> observableFrom());
         findViewById(R.id.rx_create).setOnClickListener(v -> observableCreate());
         findViewById(R.id.rx_interval).setOnClickListener(v -> observableInterval());
-        findViewById(R.id.rx_interval_unsubscribe).setOnClickListener(v->observableIntervalClose());
+        findViewById(R.id.rx_interval_unsubscribe).setOnClickListener(v -> observableIntervalClose());
         findViewById(R.id.rx_map).setOnClickListener(v -> observableMap());
         findViewById(R.id.rx_flat_map).setOnClickListener(v -> observableFlapMap());
         findViewById(R.id.rx_filter).setOnClickListener(v -> observableFilter());
@@ -187,8 +187,10 @@ public class MyRxActivity extends AppCompatActivity {
     }
 
     private void observableIntervalClose() {
-        if (!intervalObserver1.isUnsubscribed()) intervalObserver1.unsubscribe();
-        if (!intervalObserver2.isUnsubscribed()) intervalObserver2.unsubscribe();
+        if (null != intervalObserver1 && !intervalObserver1.isUnsubscribed())
+            intervalObserver1.unsubscribe();
+        if (null != intervalObserver2 && !intervalObserver2.isUnsubscribed())
+            intervalObserver2.unsubscribe();
     }
 
     private void observableIntervalToHot() {
@@ -370,16 +372,16 @@ public class MyRxActivity extends AppCompatActivity {
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleSubscriber<String>() {
-            @Override
-            public void onSuccess(String s) {
-                setMessage("Single Create", s);
-            }
+                    @Override
+                    public void onSuccess(String s) {
+                        setMessage("Single Create", s);
+                    }
 
-            @Override
-            public void onError(Throwable error) {
-                Log.d(TAG, error.toString());
-            }
-        });
+                    @Override
+                    public void onError(Throwable error) {
+                        Log.d(TAG, error.toString());
+                    }
+                });
         compositeSubscription.add(subscription);
     }
 
