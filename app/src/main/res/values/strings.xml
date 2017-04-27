@@ -5,6 +5,7 @@
     <string name="go_rxjava_page">RxJava Example</string>
     <string name="go_rxbinding_page">RxBinding Example</string>
     <string name="go_rxlifecycle">RxLifeCycle Example</string>
+    <string name="go_retrofit">Retrofit Example</string>
 
     <string name="observer_min">小明</string>
     <string name="observer_mei">小美</string>

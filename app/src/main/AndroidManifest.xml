@@ -2,6 +2,8 @@
 <manifest package="learn.maoy.com.rxtest"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,6 +26,10 @@
         <activity android:name=".rxbinding.BindingActivity">
         </activity>
         <activity android:name=".rxlifecycle.LCActivity">
+        </activity>
+        <activity android:name=".rxbinding.BindingListActivity">
+        </activity>
+        <activity android:name=".retrofit.RetrofitActivity">
         </activity>
     </application>
 
