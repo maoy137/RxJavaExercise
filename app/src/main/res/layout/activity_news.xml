@@ -23,6 +23,7 @@
             android:id="@+id/min_subscribe_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/subscribe"/>
     </LinearLayout>
 
@@ -52,6 +53,7 @@
             android:id="@+id/mei_subscribe_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/subscribe"/>
     </LinearLayout>
 
@@ -68,8 +70,9 @@
         android:background="@color/colorPrimary"/>
 
     <Button
+        android:id="@+id/send_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/send_btn"/>
+        android:text="@string/news"/>
 
 </LinearLayout>

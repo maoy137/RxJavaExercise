@@ -11,8 +11,6 @@ public class NewsActivity extends AppCompatActivity {
     private TextView minMessage, meiMessage;
     private Button minSubscribe, meiSubscribe, send;
     private NewspaperOffice newspaperOffice;
-    private boolean isMinSubscribe = false;
-    private boolean isMeiSubscribe = false;
     private int count;
 
     @Override
@@ -30,27 +28,17 @@ public class NewsActivity extends AppCompatActivity {
         final Customer min = new Customer(minMessage);
         final Customer mei = new Customer(meiMessage);
 
-        minSubscribe.setOnClickListener(l -> minClick(min));
-        meiSubscribe.setOnClickListener(l -> meiClick(mei));
+        minSubscribe.setOnClickListener(l -> subscribeClick(min));
+        meiSubscribe.setOnClickListener(l -> subscribeClick(mei));
         send.setOnClickListener(l -> sendClick());
     }
 
-    private void minClick(Customer min) {
-        if (isMinSubscribe) {
-            newspaperOffice.unsubscribeNewspaper(min);
+    private void subscribeClick(Customer customer) {
+        if (newspaperOffice.isSubscribeNewspaper(customer)) {
+            newspaperOffice.unsubscribeNewspaper(customer);
         } else {
-            newspaperOffice.subscribeNewspaper(min);
+            newspaperOffice.subscribeNewspaper(customer);
         }
-        isMinSubscribe = !isMinSubscribe;
-    }
-
-    private void meiClick(Customer mei) {
-        if (isMeiSubscribe) {
-            newspaperOffice.unsubscribeNewspaper(mei);
-        } else {
-            newspaperOffice.subscribeNewspaper(mei);
-        }
-        isMeiSubscribe = !isMeiSubscribe;
     }
 
     private void sendClick() {

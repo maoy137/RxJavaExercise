@@ -42,6 +42,10 @@ public class NewspaperOffice implements ISubject {
         removeObserver(observer);
     }
 
+    public boolean isSubscribeNewspaper(IObserver observer) {
+        return lists.indexOf(observer) >= 0;
+    }
+
     public void sendNewspaper(String content) {
         notifyObservers(content);
     }
