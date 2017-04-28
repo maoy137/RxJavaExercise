@@ -80,31 +80,6 @@ public class RetrofitActivity extends AppCompatActivity {
                             }
                         });
             }
-
-//            httpService.getUser("facebook")
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(new Subscriber<ResponseBody>() {
-//                        @Override
-//                        public void onCompleted() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onNext(ResponseBody responseBody) {
-//                            try {
-//                                Log.d(TAG, responseBody.string());
-//                            } catch (IOException e) {
-//                                Log.d(TAG, e.toString());
-//                            }
-//
-//                        }
-//                    });
         });
     }
 }
