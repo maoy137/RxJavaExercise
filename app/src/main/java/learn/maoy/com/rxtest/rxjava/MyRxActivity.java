@@ -97,6 +97,30 @@ public class MyRxActivity extends AppCompatActivity {
         }
     }
 
+    private void observableSample() {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                subscriber.onNext("test");
+            }
+        }).subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "completed");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "error: " + e.toString());
+            }
+
+            @Override
+            public void onNext(String s) {
+                Log.d(TAG, "next: " + s);
+            }
+        });
+    }
+
     // 1 : just
     private void observableJust() {
         Log.d(TAG, "observableJust");
@@ -476,6 +500,23 @@ public class MyRxActivity extends AppCompatActivity {
         });
     }
 
+    private void bridge() {
+        PublishSubject<Boolean> subject = PublishSubject.create();
+        subject.subscribe(aBoolean -> Log.d(TAG, aBoolean.toString()));
+
+        Observable.create((Observable.OnSubscribe<Integer>) subscriber -> {
+            for (int i = 0; i < 5; i++) {
+                subscriber.onNext(i);
+            }
+            subscriber.onCompleted();
+        }).doOnCompleted(new Action0() {
+            @Override
+            public void call() {
+                subject.onNext(true);
+            }
+        }).subscribe();
+    }
+
     private void schedulerSample() {
         Scheduler.Worker worker = Schedulers.newThread().createWorker();
         worker.schedule(new Action0() {
@@ -509,6 +550,21 @@ public class MyRxActivity extends AppCompatActivity {
                 .map(s -> s.hashCode())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> Log.d(TAG, integer.toString()));
+    }
+
+    private void observableUsing() {
+        Observable<Character> values = Observable.using(
+                // 創建一次性資源的工廠功能
+                () -> "MyResource",
+                // 創建可觀察的工廠函數
+                (resource) -> Observable.create(o -> {
+                    for (Character c : resource.toCharArray()) o.onNext(c);
+                    o.onCompleted();
+                }),
+                // 處理資源的功能
+                (resource) -> System.out.println("Disposed: " + resource));
+
+        values.subscribe(System.out::println, System.out::println);
     }
 
     @Override
